@@ -1,1 +1,2 @@
-# TakeTen-RP-Server
+# WeRP Server
+The official repository of the *WeRP* Live Server.
