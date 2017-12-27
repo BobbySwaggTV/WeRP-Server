@@ -1,4 +1,5 @@
-﻿using CitizenFX.Core;
+using Aeonix;
+using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using System;
@@ -11,15 +12,25 @@ namespace Client
 {
 	public class Client : BaseScript
 	{
+		private bool welcomeMessageShown = false;
+
 		public Client()
 		{
 			this.LoadModules();
 			this.LoadEvents();
 
-			bool monthIsDecember = (DateTime.Now.Month == 12) ? true : false;
-			if (monthIsDecember)
+			this.ActivateSeasonalEvent();
+
+			Tick += OnTick;
+		}
+
+		public void ActivateSeasonalEvent()
+		{
+			int currentMonth = DateTime.Now.Month;
+
+			if (currentMonth == 12) // Christmas
 			{
-				Debug.WriteLine("Christmas time, bitches!");
+				Debug.WriteLine("Activating Christmas seasonal event..");
 
 				API.SetWeatherTypeNowPersist("XMAS");
 				API.SetForcePedFootstepsTracks(true);
@@ -27,10 +38,8 @@ namespace Client
 			}
 			else
 			{
-				Debug.WriteLine("The Grinch stole Christmas :(");
+				Debug.WriteLine("No seasonal effects to apply..");
 			}
-
-			Tick += OnTick;
 		}
 
 		public void DeleteVehicle(int player = -1)
@@ -92,103 +101,36 @@ namespace Client
 			return direction;
 		}
 
-		public String GetZoneFullname(String zone)
+		public String GetWelcomeMessage(bool includeUsername = false)
 		{
-			Dictionary<String, String> zoneDefinitions = new Dictionary<String, String>
-			{
-				["AIRP"] = "Los Santos International Airport",
-				["ALAMO"] = "Alamo Sea",
-				["ALTA"] = "Alta",
-				["ARMYB"] = "Fort Zancudo",
-				["BANHAMC"] = "Banham Canyon Dr",
-				["BANNING"] = "Banning",
-				["BEACH"] = "Vespucci Beach",
-				["BHAMCA"] = "Banham Canyon",
-				["BRADP"] = "Braddock Pass",
-				["BRADT"] = "Braddock Tunnel",
-				["BURTON"] = "Burton",
-				["CALAFB"] = "Calafia Bridge",
-				["CANNY"] = "Raton Canyon",
-				["CCREAK"] = "Cassidy Creek",
-				["CHAMH"] = "Chamberlain Hills",
-				["CHIL"] = "Vinewood Hills",
-				["CHU"] = "Chumash",
-				["CMSW"] = "Chiliad Mountain State Wilderness",
-				["CYPRE"] = "Cypress Flats",
-				["DAVIS"] = "Davis",
-				["DELBE"] = "Del Perro Beach",
-				["DELPE"] = "Del Perro",
-				["DELSOL"] = "La Puerta",
-				["DESRT"] = "Grand Senora Desert",
-				["DOWNT"] = "Downtown",
-				["DTVINE"] = "Downtown Vinewood",
-				["EAST_V"] = "East Vinewood",
-				["EBURO"] = "El Burro Heights",
-				["ELGORL"] = "El Gordo Lighthouse",
-				["ELYSIAN"] = "Elysian Island",
-				["GALFISH"] = "Galilee",
-				["GOLF"] = "GWC and Golfing Society",
-				["GRAPES"] = "Grapeseed",
-				["GREATC"] = "Great Chaparral",
-				["HARMO"] = "Harmony",
-				["HAWICK"] = "Hawick",
-				["HORS"] = "Vinewood Racetrack",
-				["HUMLAB"] = "Humane Labs and Research",
-				["JAIL"] = "Bolingbroke Penitentiary",
-				["KOREAT"] = "Little Seoul",
-				["LACT"] = "Land Act Reservoir",
-				["LAGO"] = "Lago Zancudo",
-				["LDAM"] = "Land Act Dam",
-				["LEGSQU"] = "Legion Square",
-				["LMESA"] = "La Mesa",
-				["LOSPUER"] = "La Puerta",
-				["MIRR"] = "Mirror Park",
-				["MORN"] = "Morningwood",
-				["MOVIE"] = "Richards Majestic",
-				["MTCHIL"] = "Mount Chiliad",
-				["MTGORDO"] = "Mount Gordo",
-				["MTJOSE"] = "Mount Josiah",
-				["MURRI"] = "Murrieta Heights",
-				["NCHU"] = "North Chumash",
-				["NOOSE"] = "N.O.O.S.E",
-				["OCEANA"] = "Pacific Ocean",
-				["PALCOV"] = "Paleto Cove",
-				["PALETO"] = "Paleto Bay",
-				["PALFOR"] = "Paleto Forest",
-				["PALHIGH"] = "Palomino Highlands",
-				["PALMPOW"] = "Palmer-Taylor Power Station",
-				["PBLUFF"] = "Pacific Bluffs",
-				["PBOX"] = "Pillbox Hill",
-				["PROCOB"] = "Procopio Beach",
-				["RANCHO"] = "Rancho",
-				["RGLEN"] = "Richman Glen",
-				["RICHM"] = "Richman",
-				["ROCKF"] = "Rockford Hills",
-				["RTRAK"] = "Redwood Lights Track",
-				["SANAND"] = "San Andreas",
-				["SANCHIA"] = "San Chianski Mountain Range",
-				["SANDY"] = "Sandy Shores",
-				["SKID"] = "Mission Row",
-				["SLAB"] = "Stab City",
-				["STAD"] = "Maze Bank Arena",
-				["STRAW"] = "Strawberry",
-				["TATAMO"] = "Tataviam Mountains",
-				["TERMINA"] = "Terminal",
-				["TEXTI"] = "Textile City",
-				["TONGVAH"] = "Tongva Hills",
-				["TONGVAV"] = "Tongva Valley",
-				["VCANA"] = "Vespucci Canals",
-				["VESP"] = "Vespucci",
-				["VINE"] = "Vinewood",
-				["WINDF"] = "Ron Alternates Wind Farm",
-				["WVINE"] = "West Vinewood",
-				["ZANCUDO"] = "Zancudo River",
-				["ZP_ORT"] = "Port of South Los Santos",
-				["ZQ_UAR"] = "Davis Quartz"
-			};
+			int currentDay = DateTime.Now.Day;
+			int currentMonth = DateTime.Now.Month;
+			String replace = "";
+			String welcomeMessage = "Welcome to ^5WeRP^0!\n › Run ^5/help^0 to see the available commands\n › ^5/rules^0 to see our rules\n › ^5/contact^0 to contact us!";
 
-			zoneDefinitions.TryGetValue(zone, out String zoneMatch);
-			return zoneMatch;
+			if (currentMonth == 1 && currentDay == 1) // New Years
+			{
+				replace = "Happy New Years";
+			}
+			else if (currentMonth == 12) // Christmas
+			{
+				replace = "^1Happy ^2Holidays^0";
+			}
+
+			if (replace != "")
+			{
+				welcomeMessage = welcomeMessage.Replace("Welcome to", replace + " from");
+			}
+
+			if (includeUsername)
+			{
+				int playerId = Game.Player.ServerId;
+				String playerName = API.GetPlayerName(API.GetPlayerFromServerId(playerId));
+
+				welcomeMessage = welcomeMessage.Replace("^5WeRP^0", "^5WeRP^0, " + playerName);
+			}
+
+			return welcomeMessage;
 		}
 
 		private void LoadEvents()
@@ -278,7 +220,7 @@ namespace Client
 				streetNameOutput += " / " + crossingRoad;
 			}
 
-			String zoneName = this.GetZoneFullname(API.GetNameOfZone(position.X, position.Y, position.Z));
+			String zoneName = Util.GetZoneFullname(API.GetNameOfZone(position.X, position.Y, position.Z));
 
 			API.SetTextFont(2);
 			API.SetTextScale(0.0F, 0.9F);
@@ -314,44 +256,19 @@ namespace Client
 			API.DrawText(xPosition, yPosition + 0.085F);
 		}
 
-		private void PlayerSpawned(ExpandoObject spawn)
+		private void PlayerSpawned(ExpandoObject spawned)
 		{
-			var model = ((IDictionary<String, Object>)spawn);
-			double x = 0;
-			double y = 0;
-			double z = 0;
-
-			foreach (KeyValuePair<String, Object> data in model)
+			if (this.welcomeMessageShown)
 			{
-				if (data.Key == "x")
-				{
-					x = (double)data.Value;
-				}
-				else if (data.Key == "y")
-				{
-					y = (double)data.Value;
-				}
-				else if (data.Key == "x")
-				{
-					z = (double)data.Value;
-				}
+				return;
 			}
 
-			PlayerList players = new PlayerList();
-			int playerId = Game.Player.ServerId;
-			Player player = players[playerId];
-			Debug.WriteLine("Player " + player.Name + "(#" + playerId + ") spawned (X: " + x + ", Y: " + y + ", Z: " + z + ")");
+			int playerId = API.GetPlayerIndex();
+			String playerName = API.GetPlayerName(API.GetPlayerFromServerId(playerId));
 
-			bool monthIsDecember = (DateTime.Now.Month == 12) ? true : false;
-			String welcomeMessage = "Welcome to ^5WeRP^0!\n › Run ^5/help^0 to see the available commands\n › ^5/rules^0 to see our rules\n › ^5/contact^0 to contact us!";
-			if (monthIsDecember)
-			{
-				welcomeMessage = welcomeMessage.Replace("Welcome to", "^1Happy ^2Holidays^0 from");
-			}
-
-			// TODO: Don't show this message if the player is respawning.
 			// TODO: Change the message to say "Welcome back" instead of "Welcome" if the player has joined before
-			TriggerEvent("chatMessage", "", new int[] { 255, 255, 255 }, welcomeMessage);
+			TriggerEvent("chatMessage", "", new int[] { 255, 255, 255 }, this.GetWelcomeMessage(true));
+			this.welcomeMessageShown = true;
 		}
 	}
 }

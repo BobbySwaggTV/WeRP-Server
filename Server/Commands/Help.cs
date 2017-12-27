@@ -1,4 +1,4 @@
-﻿using Aeonix;
+using Aeonix;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Server.Commands
 
 			foreach(KeyValuePair<String, CommandBase> data in commands)
 			{
-				String name = data.Value.GetName().ToLower();
+				String name = data.Value.GetName(true);
 				String description = data.Value.GetDescription();
 				String nameAppend = "› ^5" + name + "^0";
 

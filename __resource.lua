@@ -1,2 +1,9 @@
-﻿client_script "Client.net.dll"
-server_script "Server.net.dll"
+﻿client_script {
+	"Aeonix.net.dll",
+	"Client.net.dll"
+}
+
+server_script {
+	"Aeonix.net.dll",
+	"Server.net.dll"
+}
