@@ -1,4 +1,5 @@
-﻿using Aeonix;
+using Aeonix;
+using Aeonix.Util;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Server.Commands
 			
 			CommandHandlerBase handler = this.GetHandler();
 			String playerName = handler.GetExecutorName();
-			BaseScript.TriggerClientEvent("chatMessage", "", new int[] { 255, 255, 25 }, "^5" + playerName + message + "^0");
+			BaseScript.TriggerClientEvent("chatMessage", "", Color.Action, playerName + message);
 			return false;
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using Aeonix;
+using Aeonix;
+using Aeonix.Util;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System;
@@ -39,7 +40,7 @@ namespace Server
 
 			if (!Core.GetInstance().HasCommand(command))
 			{
-				TriggerClientEvent("chatMessage", "^1[Server]", new int[] { 0, 0, 0 }, "^1Unknown command: /" + command);
+				TriggerClientEvent("chatMessage", "", Color.Error, "[System] Unknown command: ^0/" + command);
 				return;
 			}
 
@@ -75,18 +76,18 @@ namespace Server
 
 				if (commandType == null)
 				{
-					Debug.WriteLine("Can't create command object for '" + commandName + "', class doesn't exist..");
+					Core.LogServer("Can't create command object for '" + commandName + "', class doesn't exist..");
 					continue;
 				}
 
 				CommandBase commandObject = (CommandBase)Activator.CreateInstance(commandType);
 				if (commandObject == null)
 				{
-					Debug.WriteLine("Command '" + commandName + "' not registered, couldn't create instance..");
+					Core.LogServer("Command '" + commandName + "' not registered, couldn't create instance..");
 					continue;
 				}
 
-				Debug.WriteLine("Command registered: " + commandName);
+				Core.LogServer("Command registered: " + commandName);
 
 				registeredCommands++;
 				Core.GetInstance().RegisterCommand(commandName, commandObject);
@@ -94,22 +95,22 @@ namespace Server
 
 			if (registeredCommands == commands.Count)
 			{
-				Debug.WriteLine("All commands registered successfully!");
+				Core.LogServer("All commands registered successfully!");
 			}
 			else
 			{
-				Debug.WriteLine("Registered " + registeredCommands + "/" + commands.Count + " successfully");
+				Core.LogServer("Registered " + registeredCommands + "/" + commands.Count + " successfully");
 			}
 		}
 
 		private void LoadEvents()
 		{
 			// TODO: Load these dynamically..
-			Debug.WriteLine("Registering events..");
-			Debug.WriteLine("Registering event: chatMessage");
+			Core.LogServer("Registering events..");
+			Core.LogServer("Registering event: chatMessage");
 			EventHandlers.Add("chatMessage", new Action<int, String, String>(ChatMessage));
 
-			Debug.WriteLine("Registering event: playerDropped");
+			Core.LogServer("Registering event: playerDropped");
 			EventHandlers.Add("playerDropped", new Action<Player, String>(PlayerDropped));
 		}
 
@@ -122,7 +123,7 @@ namespace Server
 		{
 			String leftMessage = player.Name + " " + reason.ToLower().Replace(".", "");
 			Debug.WriteLine(leftMessage);
-			TriggerClientEvent("chatMessage", "", new int[] { 255, 255, 255 }, "^7" + leftMessage);
+			TriggerClientEvent("chatMessage", "", Color.System, leftMessage);
 		}
 	}
 }

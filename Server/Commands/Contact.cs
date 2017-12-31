@@ -1,4 +1,5 @@
-﻿using Aeonix;
+using Aeonix;
+using Aeonix.Util;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,16 @@ namespace Server.Commands
 		{
 			return new List<String>
 			{
-				"^5Discord^0 - https://discord.gg/Q4xPFuh",
-				"^5Facebook^0 - https://facebook.com/werp.official/",
-				"^5Twitter^0 - https://twitter.com/werp_official/"
+				"Discord - https://discord.gg/Q4xPFuh",
+				"Facebook - https://facebook.com/werp.official/",
+				"Twitter - https://twitter.com/werp_official/"
 			};
 		}
 
 		public override bool Process(List<String> args = null)
 		{
 			List<String> contacts = this.GetContactInfo();
-			String message = "Need help? Want to appeal a ban? Contact us using one of the following methods:";
+			String message = "Need help? Want to appeal a ban? Feel free to drop us a message:";
 
 			foreach (String contact in contacts)
 			{
@@ -34,7 +35,7 @@ namespace Server.Commands
 
 			CommandHandlerBase handler = this.GetHandler();
 			String playerName = handler.GetExecutorName();
-			BaseScript.TriggerClientEvent("chatMessage", "", new int[] { 255, 255, 255 }, message);
+			BaseScript.TriggerClientEvent("chatMessage", "", Color.Default, message);
 			return false;
 		}
 	}

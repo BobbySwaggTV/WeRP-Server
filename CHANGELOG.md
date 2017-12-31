@@ -1,5 +1,10 @@
 # Changelog
-## 1.0.2 - December 27th, 2017
+## 1.0.3 - December 31st, 2017
+- Updated `Aeonix` to `1.0.3`
+- Changed chat messages to use `Color` util from `Aeonix`
+- Changed method of logging to `Aeonix`'s
+
+### 1.0.2 - December 27th, 2017
 *General*
 - Added proper logo.. Missed the part that it needed to be 96x96, not 94x94
 - Updated player spots from 10->32
@@ -9,7 +14,7 @@
 - Updated `.editorconfig` to make all files UTF-8
 - Fixed the welcome message appearing everytime a player respawned, rather than when they first joined
 
-## 1.0.1 - December 23rd, 2017
+### 1.0.1 - December 23rd, 2017
 *General*
 - All existing resources have been ported to our custom framework, `Aeonix`
 - Updated `FXServer`

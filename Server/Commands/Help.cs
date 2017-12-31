@@ -1,4 +1,5 @@
 using Aeonix;
+using Aeonix.Util;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Server.Commands
 
 		public override bool Process(List<String> args = null)
 		{
-			BaseScript.TriggerClientEvent("chatMessage", "[System]", new int[] { 255, 255, 255 }, this.GetHelpContent());
+			BaseScript.TriggerClientEvent("chatMessage", "", Color.Default, this.GetHelpContent());
 			return false;
 		}
 	}

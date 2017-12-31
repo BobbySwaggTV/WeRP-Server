@@ -1,9 +1,9 @@
 using Aeonix;
+using Aeonix.Util;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
 using System.Threading.Tasks;
@@ -30,7 +30,7 @@ namespace Client
 
 			if (currentMonth == 12) // Christmas
 			{
-				Debug.WriteLine("Activating Christmas seasonal event..");
+				Core.LogClient("Activating Christmas seasonal event..");
 
 				API.SetWeatherTypeNowPersist("XMAS");
 				API.SetForcePedFootstepsTracks(true);
@@ -38,25 +38,25 @@ namespace Client
 			}
 			else
 			{
-				Debug.WriteLine("No seasonal effects to apply..");
+				Core.LogClient("No seasonal effects to apply..");
 			}
 		}
 
 		public void DeleteVehicle(int player = -1)
 		{
-			Debug.WriteLine("Deleting vehicle..");
+			Core.LogClient("Deleting vehicle..");
 
 			int playerPed = API.GetPlayerPed(player);
 			int vehicle = API.GetVehiclePedIsIn(playerPed, false);
 
 			if (vehicle == 0)
 			{
-				TriggerEvent("chatMessage", "^1[System]", new int[] { 255, 255, 255 }, "You must be in a vehicle to use that command!");
+				TriggerEvent("chatMessage", "", Aeonix.Util.Color.Warning, "[System] You must be in a vehicle to use that command!");
 			}
 			else
 			{
 				API.DeleteVehicle(ref vehicle);
-				TriggerEvent("chatMessage", "^5[System]", new int[] { 255, 255, 255 }, "Vehicle successfully deleted!");
+				TriggerEvent("chatMessage", "", Aeonix.Util.Color.Success, "[System] Vehicle successfully deleted!");
 			}
 		}
 
@@ -136,11 +136,11 @@ namespace Client
 		private void LoadEvents()
 		{
 			// TODO: Load these dynamically..
-			Debug.WriteLine("Registering events..");
-			Debug.WriteLine("Registering event: playerSpawned");
+			Core.LogClient("Registering events..");
+			Core.LogClient("Registering event: playerSpawned");
 			EventHandlers.Add("playerSpawned", new Action<ExpandoObject>(PlayerSpawned));
 
-			Debug.WriteLine("Registering event: werp:deleteVehicle");
+			Core.LogClient("Registering event: werp:deleteVehicle");
 			EventHandlers.Add("werp:deleteVehicle", new Action<int>(DeleteVehicle));
 		}
 
@@ -220,7 +220,7 @@ namespace Client
 				streetNameOutput += " / " + crossingRoad;
 			}
 
-			String zoneName = Util.GetZoneFullname(API.GetNameOfZone(position.X, position.Y, position.Z));
+			String zoneName = Helper.GetZoneFullname(API.GetNameOfZone(position.X, position.Y, position.Z));
 
 			API.SetTextFont(2);
 			API.SetTextScale(0.0F, 0.9F);
