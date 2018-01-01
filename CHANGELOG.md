@@ -1,5 +1,12 @@
 # Changelog
-## 1.0.3 - December 31st, 2017
+## 1.0.4 - January 1st, 2018
+*General*
+- Updated logo
+
+*Watermark*
+- Reads current version from `AssemblyInfo`, rather than having to be changed manually.
+
+### 1.0.3 - December 31st, 2017
 - Updated `Aeonix` to `1.0.3`
 - Changed chat messages to use `Color` util from `Aeonix`
 - Changed method of logging to `Aeonix`'s

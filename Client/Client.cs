@@ -6,6 +6,7 @@ using CitizenFX.Core.UI;
 using System;
 using System.Drawing;
 using System.Dynamic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Client
@@ -165,7 +166,7 @@ namespace Client
 			API.SetTextEntry("STRING");
 			API.AddTextComponentString("~b~We~w~RP");
 			API.DrawText(0.005F, 0.005F);
-
+			
 			API.SetTextFont(4);
 			API.SetTextProportional(true);
 			API.SetTextScale(0.0F, 0.5F);
@@ -175,7 +176,7 @@ namespace Client
 			API.SetTextDropShadow();
 			API.SetTextOutline();
 			API.SetTextEntry("STRING");
-			API.AddTextComponentString("v1.0.1");
+			API.AddTextComponentString("v" + Assembly.GetExecutingAssembly().GetName().Version);
 			API.DrawText(0.044F, 0.0058F);
 
 			// Player Location Display
